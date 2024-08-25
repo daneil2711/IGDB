@@ -67,3 +67,36 @@ if not spark.catalog.tableExists(f"{database_name}.{table_name}"):
     df_null = spark.createDataFrame(data=[], schema=ingestao.schema)
     ingestao.save_full(df_null)
     # # !hdfs dfs -rm -R {ingestao.checkpoint_path}
+
+# %%
+ingestao.process_stream()
+
+# %% [markdown]
+# #### Checando Resultados
+
+# %%
+spark.sql('''
+show tables from bronze_igdb
+
+''').show(truncate=False)
+
+# %%
+spark.sql('''
+select count(*), count(id), count(distinct id) from
+bronze_igdb.themes
+''').show()
+
+# %%
+df = spark.read.json('/users/Daniel/data/raw/IGDB/characters')
+df.count()
+
+# %% [markdown]
+# #### Limpando ambiente
+
+# %%
+spark.sql('drop database bronze_igdb cascade')
+
+# %%
+# # !hdfs dfs -rm -R /users/Daniel/data/raw/IGDB/
+
+# %%

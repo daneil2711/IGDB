@@ -9,8 +9,5 @@ python3 main.py --endpoint genres --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint languages --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint language_supports --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint platforms --mode all --delay 2 --n_jobs 1;
-python3 main.py --endpoint platform_families --mode all --delay 2 --n_jobs 1;
-python3 main.py --endpoint platform_versions --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint regions --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint themes --mode all --delay 2 --n_jobs 1;
-python3 main.py --endpoint popularity_primitives --mode all --delay 2 --n_jobs 1;

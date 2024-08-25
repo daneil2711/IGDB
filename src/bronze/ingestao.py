@@ -69,4 +69,5 @@ if __name__ == "__main__":
         df_null = spark.createDataFrame(data=[], schema=ingestao.schema)
         ingestao.save_full(df_null)
         #!hdfs dfs -rm -R {ingestao.checkpoint_path}
-
+    # %%
+    ingestao.process_stream()
