@@ -13,3 +13,4 @@ python3 main.py --endpoint platform_families --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint platform_versions --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint regions --mode all --delay 2 --n_jobs 1;
 python3 main.py --endpoint themes --mode all --delay 2 --n_jobs 1;
+python3 main.py --endpoint popularity_primitives --mode all --delay 2 --n_jobs 1;

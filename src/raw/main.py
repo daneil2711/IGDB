@@ -104,29 +104,6 @@ def collect(endpoint, delay, **params):
     print("Iniciando o processo...")
     ingestor.process(endpoint, **params)
     print("Ok.\n")
-    
-def file_to_s3(filepath, s3_client, bucket_name):
-
-    *_, endpoint, filename = filepath.strip("/").split("/")
-
-    s3_path = f'igdb/{endpoint}/{filename}'
-
-    with open(filepath) as open_file:
-            data = json.dumps(json.load(open_file), indent=3)
-            s3_client.put_object(Body=data, Bucket=bucket_name, Key=s3_path)
-    os.remove(filepath)
-
-
-def files_to_s3(filepaths):
-
-    bucket_name = os.getenv("BUCKET_NAME")
-
-    session = boto3.Session(profile_name=PROFILE_AWS)
-
-    client = session.client('s3')
-    for i in tqdm(filepaths):
-        file_to_s3(i, client, bucket_name)
-
 
 def move_files_to_hdfs(local_dir ,hdfs_dir):
     hdfs_host = os.getenv("hdfs_host")
