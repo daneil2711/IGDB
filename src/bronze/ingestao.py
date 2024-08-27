@@ -23,7 +23,7 @@ import argparse
 
 if __name__ == "__main__":
     builder = SparkSession.builder \
-        .appName("DagApp") \
+        .appName("bronze_IGDB_DAG") \
         .enableHiveSupport() 
     spark = configure_spark_with_delta_pip(builder).getOrCreate()
     # %%
