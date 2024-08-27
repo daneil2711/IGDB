@@ -23,7 +23,7 @@ import argparse
 
 if __name__ == "__main__":
     builder = SparkSession.builder \
-        .appName("DagApp") \
+        .appName("bronze_IGDB_DAG") \
         .enableHiveSupport() 
     spark = configure_spark_with_delta_pip(builder).getOrCreate()
     # %%
@@ -69,4 +69,5 @@ if __name__ == "__main__":
         df_null = spark.createDataFrame(data=[], schema=ingestao.schema)
         ingestao.save_full(df_null)
         #!hdfs dfs -rm -R {ingestao.checkpoint_path}
-
+    # %%
+    ingestao.process_stream()

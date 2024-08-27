@@ -7,7 +7,7 @@ import requests
 
 from hdfs import InsecureClient
 import dotenv
-# from tqdm import tqdm
+from tqdm import tqdm
 
 def get_twitch_token(client_secret, client_id):
 
@@ -70,14 +70,8 @@ class Ingestor:
         
             print("Obtendo dados...")
             data = self.get_and_save(sufix, default)
-            try:
-                updated_timestamp = int(data[-1]['updated_at'])
-                print(updated_timestamp, "... Ok.")
-
-            except KeyError as err:
-                print(err)
-                print(data[-1].keys())
-                updated_timestamp = int(datetime.datetime.now().timestamp()) - 100000
+            updated_timestamp = int(data[-1]['updated_at'])
+            print(updated_timestamp, "... Ok.")
 
             if len(data) < 500 or updated_timestamp < self.delay_timestamp:
                 print("Finalizando loop...")
@@ -105,32 +99,32 @@ def collect(endpoint, delay, **params):
     ingestor.process(endpoint, **params)
     print("Ok.\n")
 
-def move_files_to_hdfs(local_dir ,hdfs_dir):
+def file_to_hdfs(filepath,client):
+    *_, endpoint, filename = filepath.strip("/").split("/")
+    hdfs_path = f'/users/Daniel/data/raw/IGDB/{endpoint}/{filename}'
+    local_path = f'data/{endpoint}/{filename}'
+
+    client.upload(hdfs_path, local_path,overwrite=True)
+    print(f"Arquivo {filename} movido para o HDFS")
+    
+    os.remove(local_path)
+    print(f"Arquivo {filename} removido localmente")
+
+def files_to_hdfs(filepaths):
     hdfs_host = os.getenv("hdfs_host")
     hdfs_user = os.getenv("hdfs_user")
     client = InsecureClient(hdfs_host, user=hdfs_user)
-
-    local_files = os.listdir(local_dir)
     
-    for file in local_files:
-        local_path = os.path.join(local_dir, file)
-        hdfs_path = hdfs_dir + '/' + file
-
-        client.upload(hdfs_path, local_path,overwrite=True)
-        print(f"Arquivo {file} movido para o HDFS")
-        
-        os.remove(local_path)
-        print(f"Arquivo {file} removido localmente")
+    for i in tqdm(filepaths):
+        file_to_hdfs(i, client)
 
 def export(endpoint, n_jobs=1):
 
-    # filespaths = [f"data/{endpoint}/{i}"  for i in os.listdir(f"data/{endpoint}/")]
-    # slices = [filespaths[i-1::n_jobs] for i in range(1, n_jobs+1)]
-    # with multiprocessing.Pool(n_jobs) as pool:
-    #     pool.map(files_to_s3, slices)
-    hdfs_dir = f'/users/Daniel/data/raw/IGDB/{endpoint}'
-    local_dir = f'data/{endpoint}'
-    move_files_to_hdfs(local_dir ,hdfs_dir)
+    filespaths = [f"data/{endpoint}/{i}"  for i in os.listdir(f"data/{endpoint}/")]
+    slices = [filespaths[i-1::n_jobs] for i in range(1, n_jobs+1)]
+    print(slices)
+    with multiprocessing.Pool(n_jobs) as pool:
+        pool.map(files_to_hdfs, slices)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--endpoint', type=str)
