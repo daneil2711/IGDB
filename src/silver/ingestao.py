@@ -7,15 +7,8 @@ import dbtools
 import argparse
 
 if __name__ == "__main__":
-    builder = pyspark.sql.SparkSession.builder.appName("bronze_IGDB_DAG") \
-        .config("spark.master", "spark://spark-master:7077") \
-        .config("spark.executor.cores", "2") \
-        .config("spark.executor.memory", "2g") \
-        .config("spark.driver.cores", "2") \
-        .config("spark.driver.memory", "2g") \
-        .config("spark.cores.max", "4") \
-        .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-        .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+    builder = pyspark.sql.SparkSession.builder \
+        .appName("bronze_IGDB_DAG") \
         .enableHiveSupport()
 
     spark = configure_spark_with_delta_pip(builder).getOrCreate()

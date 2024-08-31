@@ -1,0 +1,9 @@
+{
+  "table": "company_platform_01_years",
+  "description": "Estatisticas das plataformas por compania no último ano",
+  "partition_fields": "dtRef",
+  "date_start": "2021-12-01",
+  "date_stop": "2022-02-01",
+  "monthly": false,
+  "id_fields": "idCompany"
+}
